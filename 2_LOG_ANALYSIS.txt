@@ -1,0 +1,128 @@
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+from datetime import datetime
+import json
+
+class LogAnalysis(MRJob):
+
+    def mapper(self, _, line):
+        parts = line.strip().split()
+        if len(parts) == 3:
+            user, timestamp, action = parts
+            yield user, json.dumps((timestamp, action))
+
+    def reducer_total_time(self, user, values):
+        events = []
+        for v in values:
+            timestamp, action = json.loads(v)
+            events.append((timestamp, action))
+
+        total = 0
+        login_time = None
+
+        for timestamp, action in sorted(events):
+            try:
+                t = datetime.fromisoformat(timestamp)
+            except ValueError:
+                continue
+
+            if action == "login":
+                login_time = t
+            elif action == "logout" and login_time:
+                total += (t - login_time).total_seconds()
+                login_time = None
+
+        # Emit user and their total login hours
+        yield "user_hours", (user, round(total / 3600, 2))
+
+    def reducer_find_max(self, key, user_time_pairs):
+        user_hours = []
+        max_time = 0
+        top_users = []
+
+        for user, hours in user_time_pairs:
+            # Keep all users for printing
+            user_hours.append((user, hours))
+
+            # Find maximum
+            if hours > max_time:
+                max_time = hours
+                top_users = [user]
+            elif hours == max_time:
+                top_users.append(user)
+
+        # First print all users and their hours
+        yield "All users and their total login hours", user_hours
+
+        # Then print max user(s)
+        yield "User(s) with maximum login time", top_users
+        yield "Maximum login hours", max_time
+
+    def steps(self):
+        return [
+            MRStep(mapper=self.mapper, reducer=self.reducer_total_time),
+            MRStep(reducer=self.reducer_find_max)
+        ]
+
+if __name__ == "__main__":
+    LogAnalysis.run()
+
+
+
+
+
+
+
+
+
+
+#THEORY -
+pip install mrjob
+pip install simplejson
+
+python log_analysis.py logs.txt --output-dir=output
+
+AIM:
+To implement a MapReduce program using the MRJob library in Python for analyzing user log data, calculating total login durations, and identifying the user(s) with the maximum login time.
+
+OBJECTIVE:
+
+1. To understand and apply the MapReduce framework using MRJob.
+2. To read and process log data containing user activity such as login and logout events.
+3. To compute total login hours for each user.
+4. To identify and display the user(s) with the maximum login time.
+5. To explore the use of MRJob for performing distributed data analysis efficiently.
+
+THEORY:
+
+1. Introduction to MapReduce:
+   MapReduce is a programming model used for processing and analyzing large volumes of data across multiple computers in a distributed environment. It divides the computation into two main steps:
+
+* Mapper: Processes input data and emits intermediate key-value pairs.
+* Reducer: Aggregates and summarizes the results of the mapper’s output based on keys.
+
+MapReduce enables efficient big data processing by parallelizing tasks, reducing computation time, and improving scalability.
+
+2. What is MRJob:
+   MRJob is an open-source Python library developed by Yelp that simplifies the writing and execution of MapReduce programs. It allows developers to run MapReduce jobs locally, on Hadoop clusters, or in the cloud (like Amazon EMR) without needing to write Java code.
+
+Features of MRJob:
+
+* Written completely in Python.
+* Easy testing on local systems before deployment on large clusters.
+* Automatically handles input/output splitting and data flow.
+* Supports multiple steps (like chained mappers and reducers).
+
+3. Working of the Given Code:
+
+* Mapper Function: Reads each log line and extracts the user, timestamp, and action. Each entry is emitted as a key-value pair (user, (timestamp, action)).
+* First Reducer (reducer_total_time): Groups all activities for a single user, sorts them by time, and calculates the total active session duration (time between login and logout). The output is (user, total_login_hours).
+* Second Reducer (reducer_find_max): Collects all users and their total login hours, finds the maximum value, and lists the user(s) who logged in the longest.
+* Steps Method: Defines two MapReduce steps — first for calculating total time and second for finding the user(s) with the maximum time.
+
+4. Use of MapReduce in this Program:
+   This program demonstrates how MapReduce can efficiently handle log data. Instead of manually checking each user’s login and logout times, the MapReduce process distributes this work across multiple nodes. Each node processes a subset of data and returns partial results, which are then combined by reducers. This saves time and makes it scalable for large datasets.
+
+
+CONCLUSION:
+The MRJob-based MapReduce program efficiently processes log data to determine total login times and the user(s) with the maximum login duration. The use of MRJob simplifies writing MapReduce code in Python and demonstrates how distributed computing can handle large datasets efficiently. Such techniques are widely used in big data analytics for log processing, user behavior tracking, and performance monitoring.

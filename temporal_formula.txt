@@ -1,0 +1,3 @@
+DATEADD('day', INT([age]) * 365, #1900-01-01#)
+or
+DATEADD('day', [age] * 365, #1900-01-01#)

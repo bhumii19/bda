@@ -1,0 +1,84 @@
+import pandas as pd 
+from collections import defaultdict 
+ 
+# Step 1: Load dataset 
+df = pd.read_csv("forestfires.csv") 
+df.head() 
+ 
+# Step 2: Mapper – emit (month, temperature) pairs 
+mapped = [] 
+for _, row in df.iterrows(): 
+    mapped.append((row["Month"], row["Temperature_Celsius"]))  # month, temperature 
+ 
+print("Sample mapped data:", mapped[:5]) 
+ 
+# Step 3: Shuffle & Sort – group by month 
+grouped = defaultdict(list) 
+for month, temp in mapped: 
+    grouped[month].append(temp) 
+ 
+# Step 4: Reducer – calculate average temperature per month 
+results = {month: sum(temps)/len(temps) for month, temps in grouped.items()} 
+ 
+# Step 5: Display output
+print("Average Temperature by Month:")
+for m, avg in results.items():
+    print(f"{m}: {avg:.2f}")
+
+# Simulating Hive query using pandas groupby
+hive_result = df.groupby("Month")[["Temperature_Celsius", "Burned_Area_hectares"]].mean().reset_index()
+hive_result.columns = ["Month", "Avg_Temp", "Avg_Burned_Area"]
+
+# Print the Hive-style grouped result
+print("\nHive-style Query Result:")
+print(hive_result)
+
+
+
+
+
+
+
+
+
+#
+#THEORY
+AIM:
+To implement a MapReduce simulation in Python using pandas and collections to analyze forest fire data, calculate the average temperature per month, and compare results using a Hive-style query with pandas groupby.
+
+OBJECTIVE:
+
+1. To understand the working of the MapReduce process (Mapper, Shuffle & Sort, Reducer).
+2. To apply MapReduce logic for calculating average monthly temperatures from a dataset.
+3. To use pandas for simulating a Hive query through groupby operations.
+4. To compare manual MapReduce-style results with pandas aggregation results.
+
+THEORY:
+
+1. Introduction to MapReduce:
+   MapReduce is a framework used to process large datasets by dividing tasks into two main stages:
+
+* Mapper: Extracts and emits key-value pairs.
+* Reducer: Aggregates data based on keys and performs computations like sum or average.
+  The process involves three main steps — Map, Shuffle & Sort, and Reduce.
+
+2. Explanation of the Code:
+
+* Step 1: The dataset `forestfires.csv` is loaded using pandas into a DataFrame.
+* Step 2 (Mapper): Each record is iterated, and (Month, Temperature) pairs are emitted and stored in a list called `mapped`.
+* Step 3 (Shuffle & Sort): Data is grouped by month using a defaultdict, similar to how MapReduce groups by key before reducing.
+* Step 4 (Reducer): For each month, the average temperature is calculated by dividing the sum of all temperatures by the count of records for that month.
+* Step 5: The results are displayed, showing average temperatures for each month.
+  Additionally, a Hive-style query is simulated using pandas `groupby`, where the average temperature and burned area per month are calculated and displayed as a DataFrame.
+
+3. Use of pandas and defaultdict:
+
+* `pandas` helps in loading and manipulating the CSV data easily.
+* `defaultdict(list)` allows grouping similar keys without initializing lists manually.
+* Together, they simulate the behavior of a distributed MapReduce environment on a smaller scale.
+
+4. Use of Hive Query Simulation:
+   The Hive-style query section shows how pandas can perform SQL-like aggregations efficiently using `groupby`, mimicking Hive’s query execution in big data analytics.
+
+CONCLUSION:
+The Python program successfully demonstrates the MapReduce model using pandas and collections. It processes the forest fire dataset to calculate average monthly temperatures and simulates a Hive query for comparison. This shows how data aggregation and analysis can be achieved effectively using both manual MapReduce-style logic and pandas groupby operations, offering flexibility for both small-scale and big data processing.

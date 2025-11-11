@@ -1,0 +1,42 @@
+AIM:
+To perform various types of data visualization operations using Tableau on the Adult and Iris datasets to understand different visualization dimensions and their analytical insights.
+
+OBJECTIVE:
+
+1. To explore and visualize datasets using different visualization techniques in Tableau.
+2. To understand the concepts of 1D, 2D, 3D, temporal, multidimensional, tree, and network visualizations.
+3. To identify patterns, trends, and relationships within the Adult and Iris datasets through visual representation.
+4. To demonstrate how Tableau can be used for effective data exploration and decision-making.
+
+THEORY:
+
+1. 1D (Linear) Data Visualization:
+   This visualization represents data using a single variable. It helps analyze the distribution or frequency of one attribute. Common examples include bar charts, histograms, and line charts.
+   In Tableau, it can be used to visualize one attribute like “Age” or “Petal Length” from the Iris dataset.
+
+2. 2D (Planar) Data Visualization:
+   This type of visualization shows the relationship between two variables using a 2D plane. Examples include scatter plots and bubble charts.
+   For example, plotting “Petal Length” vs. “Petal Width” in the Iris dataset helps visualize species separation.
+
+3. 3D (Volumetric) Data Visualization:
+   3D visualization represents data across three variables, allowing users to observe interactions among multiple dimensions.
+   In Tableau, 3D scatter plots can display “Sepal Length,” “Sepal Width,” and “Petal Length” together for the Iris dataset to understand complex relationships.
+
+4. Temporal Data Visualization:
+   This visualization shows how data changes over time. Common examples are line charts, area charts, and time-series plots.
+   In Tableau, time-based attributes like “Year” or “Age Group” can be plotted to track changes in trends or frequencies over a timeline.
+
+5. Multidimensional Data Visualization:
+   This involves visualizing data with more than three attributes. Techniques such as heat maps, parallel coordinate plots, and small multiples are used.
+   In Tableau, dimensions like “Education,” “Occupation,” and “Income” from the Adult dataset can be combined to analyze multi-attribute relationships.
+
+6. Tree / Hierarchical Data Visualization:
+   This type of visualization displays hierarchical relationships between data elements using tree maps or dendrograms.
+   In Tableau, tree maps can represent categories and subcategories, such as “Occupation → Education Level” from the Adult dataset.
+
+7. Network Data Visualization:
+   Network visualization shows relationships between connected entities, represented by nodes and links.
+   In Tableau, such data can be imported and visualized to represent social connections, communication networks, or organizational structures.
+
+CONCLUSION:
+The visualization techniques performed using Tableau on the Adult and Iris datasets provide insights into data distribution, relationships, and patterns. Each visualization type serves a unique purpose — from simple 1D analysis to complex multidimensional or network representations — demonstrating the power of Tableau in data exploration and visual analytics.
